@@ -1,0 +1,1262 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+  <title>PyCon LT 2024 - C. Maureira</title>
+
+  <link rel="stylesheet" href="reveal.js/dist/reset.css">
+  <link rel="stylesheet" href="reveal.js/dist/reveal.css">
+  <link rel="stylesheet" href="css/qt-theme.css">
+  <link rel="stylesheet" href="css/qt.css">
+  <link rel="stylesheet" href="css/extras.css">
+
+  <!-- Theme used for syntax highlighted code -->
+  <link rel="stylesheet" href="reveal.js/plugin/highlight/monokai.css">
+  <!-- Printing and PDF exports -->
+  <script>
+  if( window.location.search.match( /print-pdf/gi ) ) {
+    var link = document.createElement( 'link' );
+    link.rel = 'stylesheet';
+    link.type = 'text/css';
+    link.href = 'reveal.js/css/print/pdf.css';
+    document.getElementsByTagName( 'head' )[0].appendChild( link );
+  }
+  </script>
+</head>
+<!-- CONTENT -->
+<body>
+  <div class="reveal">
+    <div class="slides">
+
+<section data-transition="fade-in fade-out" data-background-image="img/16.png">
+  <div id="left70">
+    <h3>The role of Rust, Zig and C++ in the Python ecosystem</h3>
+    <hr class="qt-line"/>
+  <p class="x80">
+    Dr. <i class="qt-lemon">Cristián</i> Maureira-Fredes<br>
+    <span class="qt-neon">@cmaureir</span><br/>
+    <img class="clean-img" src="img/mastodon.png">
+    <img class="clean-img" src="img/github_white.png">
+    <img class="clean-img" src="img/linkedin.png">
+    <img class="clean-img" src="img/twitter.png">
+  </p>
+  </div>
+</section>
+
+<section data-transition="fade-in fade-out" data-background-image="img/12.png">
+  <h1>Slides at</h1>
+  <h2><a href="https://maureira.xyz/praguepizza">maureira.xyz/pyconlt2024</a></h2>
+</section>
+
+<section data-transition="fade-in fade-out" data-background-image="img/12.png">
+  <h1 class="r-fit-text">How many <i class="qt-lemon">languages</i></h1>
+  <h1 class="r-fit-text">do <i class="qt-lemon">you</i> know?</h1>
+</section>
+
+<section data-transition="fade-in fade-out" data-background-image="img/12.png">
+  <h1 class="r-fit-text">Python is a <i class="qt-neon">simple</i> language</h1>
+</section>
+
+<section data-transition="fade-in fade-out" data-background-image="img/18.png">
+  <h3>Creating lists</h3>
+  <pre class="fragment fade-in" data-fragment-index="1" style="font-size: 85%;width: 70%;"><code class="python" data-trim data-noescape>
+      s=['a','b','c','d','e']
+      </code></pre>
+  <pre class="fragment fade-in" data-fragment-index="2" style="font-size: 85%;width: 70%;"><code class="python" data-trim data-noescape>
+      s=list('abcde')
+      </code></pre>
+  <pre class="fragment fade-in" data-fragment-index="3" style="font-size: 85%;width: 70%;"><code class="python" data-trim data-noescape>
+      *s,='abcde'
+      </code></pre>
+</section>
+
+<section data-transition="fade-in fade-out" data-background-image="img/18.png">
+  <h3>Checking if a number is a power of 2</h3>
+  <p class="fragment" data-fragment-index="2" style="font-size: 70%;width: 90%;">
+      $$ \log_{x}\ Y^Z = Z\ \log_{x} Y $$
+      </p>
+  <pre class="fragment fade-in" data-fragment-index="3" style="font-size: 70%;width: 90%;"><code class="python" data-trim data-noescape>
+      from math import log2, ceil, floor
+      ceil(log2(n)) == floor(log2(n))
+      </code></pre>
+  <pre class="fragment fade-in" data-fragment-index="4" style="font-size: 70%;width: 90%;"><code class="python" data-trim data-noescape>
+      2**n%n==0
+      </code></pre>
+  <pre class="fragment fade-in" data-fragment-index="5" style="font-size: 70%;width: 90%;"><code class="python" data-trim data-noescape>
+      2**n%n&lt;1
+      </code></pre>
+  <pre class="fragment fade-in" data-fragment-index="6" style="font-size: 70%;width: 90%;"><code class="python" data-trim data-noescape>
+      n&amp;~-n&lt;1
+      </code></pre>
+</section>
+
+<section data-transition="fade-in fade-out" data-background-image="img/18.png">
+  <h3>Accesing a Lookup table</h3>
+  <pre class="fragment fade-in" data-fragment-index="1" style="font-size: 70%;width: 90%;"><code class="python" data-trim data-noescape>
+      # 0: False
+      # 1: True
+      # 2: True
+      # 3: False
+      # 4: True
+      {0: False, 1: True, 2: True, 3: False, 4: True}
+      # or
+      (False, True, True, False, True)
+      </code></pre>
+  <pre class="fragment fade-in" data-fragment-index="2" style="font-size: 70%;width: 90%;"><code class="python" data-trim data-noescape>
+      0b10110
+      </code></pre>
+  <pre class="fragment fade-in" data-fragment-index="3" style="font-size: 70%;width: 90%;"><code class="python" data-trim data-noescape>
+      int("0b10110", 2) # 22
+      </code></pre>
+  <pre class="fragment fade-in" data-fragment-index="4" style="font-size: 70%;width: 90%;"><code class="python" data-trim data-noescape>
+      22&gt;&gt;i&amp;1
+      </code></pre>
+</section>
+
+<section data-transition="fade-in fade-out" data-background-image="img/12.png">
+  <h1 class="r-fit-text">Languages can be <i class="qt-neon">easy</i></h1>
+  <h1 class="r-fit-text">and <i class="red">difficult</i></h1>
+</section>
+
+<section data-transition="fade-in fade-out" data-background-image="img/12.png">
+  <h1 class="r-fit-text">Are we using others?</h1>
+</section>
+
+<section data-transition="fade-in fade-out" data-background-image="img/15.png">
+  <h2>NumPy</h2>
+  <img src="img/languages_numpy.png" />
+</section>
+
+<section data-transition="fade-in fade-out" data-background-image="img/15.png">
+  <h2>Pandas</h2>
+  <img src="img/languages_pandas.png" />
+</section>
+
+<section data-transition="fade-in fade-out" data-background-image="img/15.png">
+  <h2>Scikit-Learn</h2>
+  <img src="img/languages_scikit_learn.png" />
+</section>
+
+<section data-transition="fade-in fade-out" data-background-image="img/15.png">
+  <h2>Tensorflow</h2>
+  <img src="img/languages_tensorflow.png" />
+</section>
+
+<section data-transition="fade-in fade-out" data-background-image="img/15.png">
+  <h2>PyTorch</h2>
+  <img src="img/languages_pytorch.png" />
+</section>
+
+<section data-transition="fade-in fade-out" data-background-image="img/15.png">
+  <h2>Ruff</h2>
+  <img src="img/languages_ruff.png" />
+</section>
+
+<section data-transition="fade-in fade-out" data-background-image="img/12.png">
+  <h1 class="r-fit-text">Why use</h1>
+  <h1 class="r-fit-text"><i class="qt-lemon">other languages?</i></h1>
+</section>
+
+<section data-transition="fade-in fade-out" data-background-image="img/18.png">
+  <h1 class="r-fit-text">1. Getting in touch with</h1>
+  <h1 class="r-fit-text"><i class="qt-neon">new</i> technologies</h1>
+</section>
+
+<section data-transition="fade-in fade-out" data-background-image="img/18.png">
+  <h1 class="r-fit-text">2. Being able to understand</h1>
+  <h1 class="r-fit-text"><i class="qt-lemon">old</i> and <i class="qt-neon">new</i> software</h1>
+</section>
+
+<section data-transition="fade-in fade-out" data-background-image="img/18.png">
+  <h1 class="r-fit-text">3. Reach a <i class="qt-neon">new</i></h1>
+  <h1 class="r-fit-text">stack or platform</h1>
+</section>
+
+<section data-transition="fade-in fade-out" data-background-image="img/18.png">
+  <h1 class="r-fit-text">4. "Because Python is slow"</h1>
+  <p><i>- Probably someone you know.</i></p>
+</section>
+
+<section data-transition="fade-in fade-out" data-background-image="img/12.png">
+  <h3>So...how many languages are out there?</h3>
+  <h3>🤔</h3>
+</section>
+
+<section data-transition="fade-in fade-out" data-background-video="videos/programming_languages.mp4" data-background-video-loop data-background-video-muted>
+</section>
+
+<section data-transition="fade-in fade-out" data-background-image="img/12.png">
+  <h1 class="r-fit-text">No need to learn</h1>
+  <h1 class="r-fit-text">them <i class="qt-lemon">all</i></h1>
+</section>
+
+<section data-transition="fade-in fade-out" data-background-image="img/12.png">
+  <h1 class="r-fit-text"><i class="qt-neon">First</i>: Let's understand Python</h1>
+</section>
+
+<section data-transition="fade-in fade-out" data-background-image="img/interpretes.png">
+</section>
+
+<section data-transition="fade-in fade-out" data-background-image="img/14.png">
+  <h1 class="r-fit-text">Standard implementation</h1>
+  <h1 class="r-fit-text">CPython</h1>
+</section>
+
+<section data-transition="fade-in fade-out" data-background-image="img/17.png">
+  <h3>⭐ Interested?</h3>
+  The repo: <a href="https://github.com/python/cpython">github.com/python/cpython</a><br/>
+  Other talks: <a href="https://maureira.xyz/pages/talks.html">maureira.xyz/pages/talks.html</a>
+</section>
+
+<section data-transition="fade-in fade-out" data-background-image="img/17.png">
+  <h1 class="r-fit-text"><i class="qt-lemon">Extending CPython</i></h1>
+  <h1 class="r-fit-text">with other languages</h1>
+</section>
+
+<section data-transition="fade-in fade-out" data-background-image="img/18.png">
+  <img style="width: 80%;" src="img/extending.png" />
+  <p><a href="https://docs.python.org/3/extending/extending.html">docs.python.org/3/extending/extending.html</a></p>
+</section>
+
+<section data-transition="fade-in fade-out" data-background-image="img/18.png">
+  <h3>Your first C-extension (1/2)</h3>
+  <h4>Building blocks 🧱</h4>
+  <ul>
+    <li class="fragment">Functions <i class="qt-mandarin">with Python's C-API</i></li>
+    <li class="fragment">Module's <i class="qt-lemon">methods</i> definition</li>
+    <li class="fragment"><i class="qt-lemon">Module's</i> definition</li>
+    <li class="fragment">Module's creation/<i class="qt-mandarin">initialization</i></li>
+  </ul>
+</section>
+
+<section data-transition="fade-in fade-out" data-background-image="img/18.png">
+  <h3>Your first C-extension (2/2)</h3>
+  <div id="left60">
+  <pre class="fragment" style="font-size: 30%;width: 90%;"><code class="c" data-trim data-noescape>
+  #include &lt;Python.h&gt;
+
+  static char simple_docs[] = "hello(): prints hello :P\n";
+  static PyObject* simple_hello(PyObject* self, PyObject* args){
+      char *msg = "Hola PyCon LT";
+      return Py_BuildValue("s", msg);
+  }
+  static PyMethodDef simple_funcs[] = {
+      {"hello",                   // ml_name
+       (PyCFunction)simple_hello, // ml_meth
+       METH_NOARGS,               // ml_flags
+       simple_docs},              // ml_doc
+      {NULL, NULL, NULL, NULL}
+  };
+  static struct PyModuleDef simplemodule = {
+      PyModuleDef_HEAD_INIT, // m_base
+      "simple",              // m_name
+      NULL,                  // m_doc
+      -1,                    // m_size
+      simple_funcs           // m_methods
+  };
+  PyMODINIT_FUNC PyInit_simple(void){
+      return PyModule_Create(&amp;simplemodule);
+  }
+  </code></pre>
+  </div>
+  <div id="right40">
+  <pre class="fragment" style="font-size: 30%;width: 100%;"><code class="python" data-trim data-noescape>
+  # setup.py
+  from setuptools import setup, Extension
+
+  setup(
+    name='simple',
+    version='1.0',
+    ext_modules=[Extension('simple',
+      ['simple.c'])]
+  )
+  </code></pre>
+  <pre class="fragment" style="font-size: 30%;width: 100%;"><code class="bash" data-trim data-noescape>
+  # Create wheel
+  $ python -m build -w
+  </code></pre>
+
+  <pre class="fragment" style="font-size: 30%;width: 100%;"><code class="python" data-trim data-noescape>
+  &gt;&gt;&gt; import simple
+  &gt;&gt;&gt; simple.hello()
+  'Hola PyCon LT'
+  </code></pre>
+  </div>
+</section>
+
+<section data-transition="fade-in fade-out" data-background-image="img/12.png">
+  <h1 class="r-fit-text">Don't be <i class="red">scared </i>😱</h1>
+  <h1 class="r-fit-text">of the <i class="qt-lemon">syntax</i></h1>
+</section>
+
+<section data-transition="fade-in fade-out" data-background-image="img/12.png">
+  <h1 class="r-fit-text">Let's check <i class="qt-lemon">other three</i></h1>
+  <h1 class="r-fit-text">programming languages</h1>
+</section>
+
+<section class="slide-blue" data-transition="fade-in fade-out">
+  <img style="width: 50%;"src="img/cpp_logo.svg"/>
+</section>
+
+<section data-transition="fade-in fade-out" data-background-image="img/15_cpp.png">
+  <h2>C++</h2>
+  <div id="left">
+  <ul>
+    <li>Extension of C
+      <ul style="font-size: 80%;">
+        <li>OOP, Generics, Funtional</li>
+      </ul>
+    </li>
+    <li>Low level memory handling</li>
+    <li>Performance, eficiency and flexibility</li>
+    <li><a href="https://cppreference.com">cppreference.com</a></li>
+  </ul>
+  </div>
+  <div id="right">
+    <pre style="font-size: 45%;width: 90%;"><code class="cpp" data-trim data-noescape>
+    #include &lt;iostream&gt;
+
+    using namespace std;
+
+    int main(int argc, char *argv[]) {
+      cout &lt;&lt; "Hello, world!" &lt;&lt; endl;
+      return 0;
+    }
+    </code></pre>
+    <pre style="font-size: 60%;width: 90%;"><code class="bash" data-trim data-noescape>
+    $ g++ main.cpp -o main
+    $ ./main
+    Hello, world!
+    </code></pre>
+  </div>
+</section>
+
+<section data-transition="fade-in fade-out" data-background-image="img/15_cpp.png">
+  <h2>C++<i class="qt-lemon">23</i></h2>
+  <div id="left">
+  <ul>
+    <li>Extension of C
+      <ul style="font-size: 80%;">
+        <li>OOP, Generics, Funtional</li>
+      </ul>
+    </li>
+    <li>Low level memory handling</li>
+    <li>Performance, eficiency and flexibility</li>
+    <li><a href="https://cppreference.com">cppreference.com</a></li>
+  </ul>
+  </div>
+  <div id="right">
+    <pre style="font-size: 45%;width: 90%;"><code class="cpp" data-trim data-noescape>
+    import std;
+
+    int main(int argc, char *argv[]) {
+      std::print("Hello, world!");
+      return 0;
+    }
+    </code></pre>
+    <pre style="font-size: 60%;width: 90%;"><code class="bash" data-trim data-noescape>
+    $ g++ main.cpp -o main
+    $ ./main
+    Hello, world!
+    </code></pre>
+  </div>
+</section>
+
+<section data-transition="fade-in fade-out" data-background-image="img/15_cpp.png">
+  <h3>Python and C++</h3>
+  <div id="left">
+    <pre class="fragment" style="font-size: 38%;width: 95%;"><code class="python" data-trim data-noescape>
+    class Rectangle:
+      def __init__(self, width: int, height: int):
+        self.width : int = width;
+        self.height : int = height;
+
+      def set_values(self, x: int, y: int):
+        self.width = x;
+        self.height = y;
+
+      def area(self) -&gt; int:
+        return self.width * self.height
+
+
+    def main():
+      rect = Rectangle()
+      rect.set_values(3,4);
+      print(f"area: {rect.area()}")
+    </code></pre>
+  </div>
+  <div id="right">
+    <pre class="fragment" style="font-size: 38%;width: 95%;"><code class="cpp" data-trim data-noescape>
+    #include &lt;iostream&gt;
+    using namespace std;
+
+    class Rectangle {
+        int width, height;
+      public:
+        void set_values (int,int);
+        int area() {return width*height;}
+    };
+
+    void Rectangle::set_values(int x, int y) {
+      width = x;
+      height = y;
+    }
+
+    int main () {
+      Rectangle rect;
+      rect.set_values(3,4);
+      cout &lt;&lt; "area: " &lt;&lt; rect.area();
+      return 0;
+    }
+    </code></pre>
+  </div>
+</section>
+
+<section data-transition="fade-in fade-out" data-background-image="img/15_cpp.png">
+  <h3>C++ - Summary</h3>
+  <div id="left">
+  <ul style="font-size: 80%;">
+    <li>Widely used language (*)</li>
+    <li>No "pip" equivalent</li>
+    <li>Recent similar syntax with Python</li>
+    <li>Some features can be complex</li>
+  </ul>
+  </div>
+  <div id="right">
+    <iframe width="560" height="315" src="https://www.youtube.com/embed/I8UvQKvOSSw?si=mfOnGBQtLdM71wSx" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+    <p style="font-size: 60%;">
+       Delivering Safe C++ - Bjarne Stroustrup - CppCon 2023
+    </p>
+  </div>
+</section>
+
+<section class="slide-red" data-transition="fade-in fade-out">
+  <img style="width: 50%;"src="img/rust_logo.svg"/>
+</section>
+
+<section data-transition="fade-in fade-out" data-background-image="img/15_rust.png">
+  <h3>Rust</h3>
+  <div id="left">
+    <ul style="font-size: 90%;">
+      <li>Performance
+        <ul style="font-size: 70%;">
+          <li>Fast and memory efficient (no runtime or GC).</li>
+        </ul>
+      </li>
+      <li>Reliability
+        <ul style="font-size: 70%;">
+          <li>Rich type system and ownership model (memory- and thread-safety)</li>
+        </ul>
+      </li>
+      <li>Productivity
+        <ul style="font-size: 70%;">
+          <li>Docs, friendly compiler, package manager, and build tools</li>
+        </ul>
+      </li>
+    </ul>
+  </div>
+  <div id="right">
+    <pre style="font-size: 50%;width: 80%;"><code class="rust" data-trim data-noescape>
+    fn main() {
+      println!("Hello, world!");
+    }
+    </code></pre>
+    <pre style="font-size: 60%;width: 80%;"><code class="bash" data-trim data-noescape>
+    $ rustc main.rs
+    $ ./main
+    Hello, world!
+    </code></pre>
+  </div>
+</section>
+
+<section data-transition="fade-in fade-out" data-background-image="img/15_rust.png">
+  <h4>Python and Rust (1/2)</h4>
+  <div id="left">
+    <pre style="font-size: 40%;width: 90%;"><code class="python" data-trim data-noescape>
+    def main():
+      nums: List[int] = [1, 2, 3, 4, 5, 6]
+      five: int = nums[1] + nums[2];
+      print(f""Result: {five}")
+    </code></pre>
+  </div>
+  <div id="left">
+    <pre style="font-size: 40%;width: 90%;"><code class="rust" data-trim data-noescape>
+    fn main() {
+        let arr: [i32; 5] = [1, 2, 3, 4, 5];
+        let five = arr[1] + arr[2];
+        println!("Result: {}", five);
+    }
+    </code></pre>
+  </div>
+</section>
+
+<section data-transition="fade-in fade-out" data-background-image="img/15_rust.png">
+  <h4>Python and Rust (2/2)</h4>
+  <div id="left">
+    <pre style="font-size: 40%;width: 95%;"><code class="python" data-trim data-noescape>
+    class Person:
+
+      def __init__(self, name: str, age: int):
+        self.name: str = name
+        self.age: int = age
+
+      def speak(self) -&gt; None:
+        print(f"{self.name} says Hello!")
+
+
+    def main():
+        maria = Person(
+          name="Maria",
+          age=22
+        )
+        maria.speak()
+    </code></pre>
+  </div>
+  <div id="right">
+    <pre style="font-size: 40%;width: 95%;"><code class="rust" data-trim data-noescape>
+    // declare a struct
+    struct Person {
+        name: String,
+        age: i32
+    }
+    impl Person {
+      fn speak(&amp;self){
+        println!("{} says Hello!", self.name);
+      }
+    }
+
+    fn main() {
+        let maria = Person{
+          name: String::from("Maria"),
+          age: 5
+        };
+        maria.speak();
+    }
+    </code></pre>
+  </div>
+</section>
+
+<section data-transition="fade-in fade-out" data-background-image="img/15_rust.png">
+  <h3>Rust - Summary</h3>
+  <div id="left">
+  <ul style="font-size: 80%;">
+    <li>Memory management (Ownership &amp; Borrowing)</li>
+    <li>Tooling (<i class="qt-lemon"><code>cargo</code></i>)</li>
+    <li>Growing ecosystem</li>
+    <li>Still evolving</li>
+  </ul>
+  </div>
+  <div id="right">
+    <iframe width="560" height="315" src="https://www.youtube.com/embed/RvAVnH8PTcI?si=o7bNMW0ECRjaz6xB" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+    <p style="font-size: 60%;">
+       Rust for Python Developers - Swiss Python Summit 2022
+    </p>
+  </div>
+</section>
+
+<!-- zig -->
+<section class="slide-black" data-transition="fade-in fade-out">
+  <img style="width: 50%;"src="img/zig_logo.svg"/>
+</section>
+
+<section data-transition="fade-in fade-out" data-background-image="img/15_zig.png">
+  <h3>Zig</h3>
+  <div id="left">
+    <ul style="font-size: 80%;">
+      <li class="fragment">No flow control, nor hidden mem alloc</li>
+      <li class="fragment">No preprocessor, and no macros</li>
+      <li class="fragment">Metaprogramming: compile-time code exec and lazy evaluation (<code><i class="qt-lemon">comptime</i></code>)</li>
+      <li class="fragment">Tests!</li>
+    </ul>
+  </div>
+  <div id="right">
+    <pre style="font-size: 34%;width: 90%;"><code class="zig" data-trim data-noescape>
+    // main.zig
+    const std = @import("std");
+
+    pub fn main() !void {
+      const stdout = std.io.getStdOut().writer();
+      try stdout.print("Hello, {s}!\n", .{"world"});
+    }
+    </code></pre>
+    <pre style="font-size: 50%;width: 90%;"><code class="bash" data-trim data-noescape>
+    $ zig build-exe main.zig
+    $ ./hello
+    Hello, world!
+    </code></pre>
+  </div>
+</section>
+
+<section data-transition="fade-in fade-out" data-background-image="img/15_zig.png">
+  <h3>Python and Zig</h3>
+  <div id="left">
+    <pre style="font-size: 38%;width: 90%;"><code class="python" data-trim data-noescape>
+
+    class Rectangle:
+
+      def __init__(self, x, y):
+        self.x = x
+        self.y = y
+
+      def area(self):
+        return self.x * self.y
+
+    def main():
+        r = Rectangle(2.2, 3.3);
+        print(f"Rectangle area: {r.area()}")
+    </code></pre>
+  </div>
+  <div id="right">
+    <pre style="font-size: 38%;width: 95%;"><code class="zig" data-trim data-noescape>
+    const std = @import("std");
+    const Rectangle = struct {
+      x: f32,
+      y: f32,
+      pub fn init(x: f32, y: f32) Rectangle {
+        return Rectangle{.x = x, .y = y};
+      }
+      pub fn area(self: Rectangle) f32 {
+          return self.x * self.y;
+      }
+    };
+    pub fn main() !void {
+      const r = Rectangle.init(2.2, 3.3);
+      const stdout = std.io.getStdOut().writer();
+      try stdout.print("Rectangle area: {}\n",
+        .{r.area()});
+    }
+    </code></pre>
+  </div>
+</section>
+
+<section data-transition="fade-in fade-out" data-background-image="img/15_zig.png">
+  <h3>Zig - Summary</h3>
+  <div id="left">
+  <ul style="font-size: 80%;">
+    <li class="fragment">Faster and more secure than C</li>
+    <li class="fragment">Integration with C libraries without FFI/bindings</li>
+    <li class="fragment">Built-in testing framework</li>
+    <li class="fragment"><code>comptime</code></li>
+    <li class="fragment">Cross compilation out of the box (*)</li>
+  </ul>
+  <p class="fragment" fragment-index="4" style="font-size: 50%;">
+    (*) Feature might be removed <a href="https://github.com/ziglang/zig/issues/16270">Issue #16270</a>
+  </p>
+  </div>
+  <div id="right">
+    <iframe width="560" height="315" src="https://www.youtube.com/embed/YXrb-DqsBNU?si=iV59s_a-Xw5Tgp8H" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+    <p style="font-size: 40%;"> Intro to the Zig Programming Language • Andrew Kelley • GOTO 2022 </p>
+  </div>
+</section>
+
+
+<section data-transition="fade-in fade-out" data-background-image="img/12.png">
+  <h1 class="r-fit-text">How can we <i class="qt-neon">use them</i></h1>
+  <h1 class="r-fit-text">with Python?</h1>
+</section>
+
+<section data-transition="fade-in fade-out" data-background-image="img/12.png">
+  <h3>Our previous C example</h3>
+  <div id="left60">
+  <pre style="font-size: 30%;width: 90%;"><code class="c" data-trim data-noescape>
+  #include &lt;Python.h&gt;
+
+  static char simple_docs[] = "hello(): prints hello :P\n";
+  static PyObject* simple_hello(PyObject* self, PyObject* args){
+      char *msg = "Hola PyCon LT!";
+      return Py_BuildValue("s", msg);
+  }
+  static PyMethodDef simple_funcs[] = {
+      {"hello",                   // ml_name
+       (PyCFunction)simple_hello, // ml_meth
+       METH_NOARGS,               // ml_flags
+       simple_docs},              // ml_doc
+      {NULL, NULL, NULL, NULL}
+  };
+  static struct PyModuleDef simplemodule = {
+      PyModuleDef_HEAD_INIT, // m_base
+      "simple",              // m_name
+      NULL,                  // m_doc
+      -1,                    // m_size
+      simple_funcs           // m_methods
+  };
+  PyMODINIT_FUNC PyInit_simple(void){
+      return PyModule_Create(&amp;simplemodule);
+  }
+  </code></pre>
+  </div>
+  <div id="right40">
+  <pre style="font-size: 30%;width: 100%;"><code class="python" data-trim data-noescape>
+  # setup.py
+  from setuptools import setup, Extension
+
+  setup(
+    name='simple',
+    version='1.0',
+    ext_modules=[Extension('simple',
+      ['simple.c'])]
+  )
+  </code></pre>
+  <pre style="font-size: 30%;width: 100%;"><code class="bash" data-trim data-noescape>
+  # Create wheel
+  $ python -m build -w
+  </code></pre>
+</section>
+
+<section data-transition="fade-in fade-out" data-background-image="img/12.png">
+  <h3>With C++ it's almost the same</h3>
+  <div id="left60">
+  <pre style="font-size: 28%;width: 90%;"><code class="c" data-trim data-noescape data-line-numbers="2,6-7">
+  #include &lt;Python.h&gt;
+  #include &lt;string&gt;
+
+  static char simple_docs[] = "hello(): prints hello :P\n";
+  static PyObject* simple_hello(PyObject* self, PyObject* args){
+      std::string msg = "Hola PyCon LT!";
+      return Py_BuildValue("s", msg.c_str());
+  }
+  static PyMethodDef simple_funcs[] = {
+      {"hello",                   // ml_name
+       (PyCFunction)simple_hello, // ml_meth
+       METH_NOARGS,               // ml_flags
+       simple_docs},              // ml_doc
+      {NULL, NULL, NULL, NULL}
+  };
+  static struct PyModuleDef simplemodule = {
+      PyModuleDef_HEAD_INIT, // m_base
+      "simple",              // m_name
+      NULL,                  // m_doc
+      -1,                    // m_size
+      simple_funcs           // m_methods
+  };
+  PyMODINIT_FUNC PyInit_simple(void){
+      return PyModule_Create(&amp;simplemodule);
+  }
+  </code></pre>
+  </div>
+  <div id="right40">
+  <pre style="font-size: 28%;width: 100%;"><code class="python" data-trim data-noescape data-line-numbers="8">
+  # setup.py
+  from setuptools import setup, Extension
+
+  setup(
+    name='simple',
+    version='1.0',
+    ext_modules=[Extension('simple',
+      ['simple.cpp'])]
+  )
+  </code></pre>
+  <pre style="font-size: 30%;width: 100%;"><code class="bash" data-trim data-noescape>
+  # Create wheel
+  $ python -m build -w
+  </code></pre>
+</section>
+
+<section data-transition="fade-in fade-out" data-background-image="img/12.png">
+  <h3>or a Zig extension (1/2)</h3>
+  <div id="left">
+  <pre class="fragment" style="font-size: 25%;width: 90%;"><code class="zig" data-trim data-noescape>
+const py = @cImport({
+    @cInclude("Python.h");
+});
+const PyObject = py.PyObject;
+const PyMethodDef = py.PyMethodDef;
+const PyModuleDef = py.PyModuleDef;
+const PyModuleDef_Base = py.PyModuleDef_Base;
+const Py_BuildValue = py.Py_BuildValue;
+const PyModule_Create = py.PyModule_Create;
+const METH_NOARGS = py.METH_NOARGS;
+  </code></pre>
+  <pre class="fragment" style="font-size: 25%;width: 90%;"><code class="zig" data-trim data-noescape>
+fn hello(self: [*c]PyObject,
+         args: [*c]PyObject) callconv(.C) [*]PyObject {
+    _ = self;
+    _ = args;
+    return Py_BuildValue("s", "Hello from Zig :D");
+}
+  </code></pre>
+  <pre class="fragment" style="font-size: 25%;width: 90%;"><code class="zig" data-trim data-noescape>
+var Methods = [_]PyMethodDef{
+    PyMethodDef{
+        .ml_name = "hello",
+        .ml_meth = hello,
+        .ml_flags = METH_NOARGS,
+        .ml_doc = null,
+    },
+    PyMethodDef{
+        .ml_name = null,
+        .ml_meth = null,
+        .ml_flags = 0,
+        .ml_doc = null,
+    },
+};
+  </code></pre>
+  </div>
+  <div id="right">
+  <pre class="fragment" style="font-size: 25%;width: 90%;"><code class="zig" data-trim data-noescape>
+var module = PyModuleDef{
+    .m_base = PyModuleDef_Base{
+        .ob_base = PyObject{
+            .ob_refcnt = 1,
+            .ob_type = null,
+        },
+        .m_init = null,
+        .m_index = 0,
+        .m_copy = null,
+    },
+    .m_name = "hellozig",
+    .m_doc = null,
+    .m_size = -1,
+    .m_methods = &amp;Methods,
+    .m_slots = null,
+    .m_traverse = null,
+    .m_clear = null,
+    .m_free = null,
+};
+  </code></pre>
+  <pre class="fragment" style="font-size: 25%;width: 90%;"><code class="zig" data-trim data-noescape>
+pub export fn PyInit_hellozig() [*]PyObject {
+    return PyModule_Create(&amp;module);
+}
+  </code></pre>
+  </div>
+</section>
+
+<section data-transition="fade-in fade-out" data-background-image="img/18.png">
+  <h3>or a Zig extension (2/2)</h3>
+  <div id="left">
+  <pre style="font-size: 25%;width: 90%;"><code class="python" data-trim data-noescape>
+# setup.py (1/2)
+import os
+from setuptools import setup, Extension
+from setuptools.command.build_ext import build_ext
+
+
+class ZigBuilder(build_ext):
+    def build_extension(self, ext):
+        assert len(ext.sources) == 1
+
+        if not os.path.exists(self.build_lib):
+            os.makedirs(self.build_lib)
+        self.spawn(
+            [
+                "zig",
+                "build-lib",
+                "-O",
+                "ReleaseFast",
+                "-lc",
+                f"-femit-bin={self.get_ext_fullpath(ext.name)}",
+                "-fallow-shlib-undefined",
+                "-dynamic",
+                *[f"-I{d}" for d in self.include_dirs],
+                ext.sources[0],
+            ]
+        )
+  </code></pre>
+  </div>
+  <div id="right">
+  <pre style="font-size: 25%;width: 90%;"><code class="python" data-trim data-noescape>
+# setup.py (2/2)
+setup(
+    name="hellozig",
+    version="0.0.1",
+    description="a experiment create Python module in Zig",
+    ext_modules=[
+        Extension("hellozig", sources=["hellomodule.zig"])
+    ],
+    cmdclass={"build_ext": ZigBuilder},
+)
+  </code></pre>
+  <pre style="font-size: 30%;width: 90%;"><code class="bash" data-trim data-noescape>
+  # Create wheel
+  $ python -m build -w
+  </code></pre>
+  </div>
+</section>
+
+
+<section data-transition="fade-in fade-out" data-background-image="img/18.png">
+  <h3>Do we need to write all that by hand?</h3>
+  <h3>😱</h3>
+</section>
+
+<section data-transition="fade-in fade-out" data-background-image="img/12.png">
+  <h3 class="r-fit-text">Binding generators</h3>
+  <img src="img/proceso_bindings.png" />
+</section>
+
+<section data-transition="fade-in fade-out" data-background-image="img/18.png">
+  <h3>pybind11 (C++)</h3>
+  <pre style="font-size: 65%; width: 90%;"><code class="cpp" data-trim data-noescape>
+  #include &lt;pybind11/pybind11.h&gt;
+
+  int add(int i, int j) {
+      return i + j;
+  }
+
+  PYBIND11_MODULE(example, m) {
+    // optional module docstring
+    m.doc() = "pybind11 example plugin";
+    m.def("add", &amp;add,
+      "A function that adds two numbers");
+  }
+  </code></pre>
+  <pre style="font-size: 50%; width: 90%;"><code class="bash" data-trim data-noescape>
+  $ c++ -O3 -Wall -shared -std=c++11 \
+    -fPIC $(python3 -m pybind11 --includes) example.cpp \
+    -o example$(python3-config --extension-suffix)
+  </code></pre>
+</section>
+
+<section data-transition="fade-in fade-out" data-background-image="img/18.png">
+  <h3>Shiboken (C++)
+  <img class="clean-img" style="height: 60px;" src="img/qt_white.png" />
+  </h3>
+  <p><a href="https://doc.qt.io/qtforpython-6/shiboken6">doc.qt.io/qtforpython-6/shiboken6</a></p>
+  <div id="left">
+  <pre style="font-size: 65%; width: 90%;"><code class="cpp" data-trim data-noescape>
+  // test.cpp
+  #include &lt;test.hpp&gt;
+
+  int add(int i, int j) {
+      return i + j;
+  }
+
+  </code></pre>
+  <pre style="font-size: 65%; width: 90%;"><code class="cpp" data-trim data-noescape>
+  // test.hpp
+  int add(int i, int j);
+  </code></pre>
+  </div>
+  <div id="right">
+  <pre style="font-size: 40%; width: 90%;"><code class="xml" data-trim data-noescape>
+    &lt;!-- bindings.xml --&gt;
+    &lt;?xml version="1.0"?&gt;
+    &lt;typesystem package="simple"&gt;
+        &lt;function signature="add(int, int)"/&gt;
+    &lt;/typesystem&gt;
+  </code></pre>
+  <pre style="font-size: 50%; width: 90%;"><code class="bash" data-trim data-noescape>
+  $ cmake -S . -B build
+  $ cmake --build build
+  $ cmake --install build
+  </code></pre>
+  </div>
+</section>
+
+<section data-transition="fade-in fade-out" data-background-image="img/18.png">
+  <h3>PyO3 (Rust)</h3>
+  <pre style="font-size: 50%; width: 90%;"><code class="rust" data-trim data-noescape>
+  use pyo3::prelude::*;
+
+  /// The sum of two numbers.
+  #[pyfunction]
+  fn add(a: i32, b: i32) -&gt; PyResult<i32> {
+      Ok(a + b)
+  }
+
+  /// A Python module implemented in Rust.
+  #[pymodule]
+  fn simple_rust(_py: Python, m: &amp;PyModule) -&gt; PyResult<()> {
+      m.add_function(wrap_pyfunction!(add, m)?)?;
+      Ok(())
+  }
+  </code></pre>
+  <pre style="font-size: 50%; width: 90%;"><code class="rust" data-trim data-noescape>
+  $ maturin develop
+  </code></pre>
+</section>
+
+<section data-transition="fade-in fade-out" data-background-image="img/18.png">
+  <h3>Ziggy PyDust (Zig)</h3>
+  <pre style="font-size: 50%; width: 90%;"><code class="zig" data-trim data-noescape>
+  const py = @import("pydust");
+
+  pub fn add(args: struct { a: i32, b: i32 }) i32 {
+      return args.a + args.b;
+  }
+
+  comptime {
+    py.rootmodule(@This());
+  }
+  </code></pre>
+  <pre style="font-size: 50%; width: 90%;"><code class="rust" data-trim data-noescape>
+  $ poetry install
+  </code></pre>
+</section>
+
+<section data-transition="fade-in fade-out" data-background-image="img/17.png">
+  <h3>What's the <i class="red">catch</i>? 😱</h3>
+  <ul>
+    <li class="fragment">Language details</li>
+    <li class="fragment">Data types and Pointers</li>
+    <li class="fragment">Memory management (ownership)</li>
+    <li class="fragment">Global Interpreter Lock (GIL)</li>
+    <li class="fragment">and many other topics!</li>
+  </ul>
+</section>
+
+<section data-transition="fade-in fade-out" data-background-image="img/12.png">
+  <h1 class="r-fit-text">Real application</h1>
+  <h3><i class="red">rustglob</i></h3>
+</section>
+
+<section data-transition="fade-in fade-out" data-background-image="img/18.png">
+  <pre style="font-size: 45%; width: 100%;"><code class="rust" data-trim data-noescape>
+use pyo3::{prelude::*, types::PyList};
+use std::fs;
+use walkdir::WalkDir;
+
+#[pyfunction]
+fn glob(py: Python<'_>, path: String, recursive: Option<bool>) -> PyResult<&PyList> {
+    let list: &PyList = PyList::empty(py);
+    if recursive.unwrap_or(false) == false {
+        for path in fs::read_dir(path).unwrap() {
+            let _ = list.append(path.unwrap().path().display().to_string());
+        }
+    } else {
+        for path in WalkDir::new(path) {
+            let _ = list.append(path.unwrap().path().display().to_string());
+        }
+    };
+    Ok(list)
+}
+
+#[pymodule]
+fn rust_glob(_py: Python, m: &PyModule) -> PyResult<()> {
+    m.add_function(wrap_pyfunction!(glob, m)?)?;
+    Ok(())
+}
+  </code></pre>
+</section>
+
+<section data-transition="fade-in fade-out">
+  <h3>Setup &amp; benchmark</h3>
+  <p><i class="qt-neon">1K directories, 1M files</i></p>
+  <table class="fragment" style="font-size: 85%;">
+  <tr class="fragment" style="font-size: 80%;">
+    <td></td>
+    <td>Non-recursive (s)</td>
+    <td>Recursive (s)</td>
+    <td>Improvement</td>
+  </tr>
+  <tr class="fragment">
+    <td><code>glob</code></td>
+    <td>0.00204</td>
+    <td><i class="qt-lemon">6.46604</i></td>
+    <td>-</td>
+  </tr>
+  <tr class="fragment">
+    <td><code>Path.glob</code></td>
+    <td>0.43959</td>
+    <td><i class="qt-lemon">4.64072</i></td>
+    <td><i class="qt-lemon">28%</i></td>
+  </tr>
+  <tr class="fragment">
+    <td><code><i class="red">Rust glob</i></code></td>
+    <td>0.00086</td>
+    <td><i class="qt-lemon">0.96463</i></td>
+    <td><i class="qt-lemon">85%</i><span class="fragment" fragment-index="4">🎉</span></td>
+  </tr>
+  <tr class="fragment" >
+    <td><code><i class="blue">C++ glob</i></code></td>
+    <td>0.00056</td>
+    <td><i class="qt-lemon">0.56199</i></td>
+    <td><i class="qt-lemon">91% 🤔</i></td>
+  </tr>
+  </table>
+</section>
+
+<section data-transition="fade-in fade-out" data-background-image="img/18.png">
+  <pre style="font-size: 35%; width: 100%;"><code class="cpp" data-trim data-noescape>
+static PyObject* fastglob_glob(PyObject* self, PyObject* args, PyObject* kwds){
+
+    // Parsing the arguments of the function call
+    const char *kwlist[] = {"directory", "recursive",0};
+    const char *directory = nullptr;
+    const int *recursive = nullptr;
+    if (!PyArg_ParseTupleAndKeywords(args, kwds, "z|p", const_cast<char **>(kwlist),
+                                     &amp;directory, &amp;recursive))
+        return nullptr;
+
+    // Creating empty list
+    PyObject *l = PyList_New(0);
+    // Filling the list depending if it's recursive or not
+    if (recursive) {
+        for (const auto &amp;entry : fs::recursive_directory_iterator(directory))
+            PyList_Append(l, PyUnicode_FromString(entry.path().c_str()));
+    } else {
+        for (const auto &amp;entry : fs::directory_iterator(directory))
+            PyList_Append(l, PyUnicode_FromString(entry.path().c_str()));
+    }
+    return l;
+}
+
+  </code></pre>
+</section>
+
+<section data-transition="fade-in fade-out" data-background-image="img/12.png">
+  <h1 class="r-fit-text">Today's relevance ⚠️</h1>
+</section>
+
+<section data-transition="fade-in fade-out" data-background-image="img/12.png">
+  <h2>Compiled <i class="qt-lemon">vs</i> Interpreted</h2>
+</section>
+
+<section data-transition="fade-in fade-out" data-background-image="img/12.png">
+  <h3>Compiled ones, are <i class="qt-neon">faster</i></h3>
+  <img class="fragment" style="width: 30%;" src="img/surprised_pikachu.webp" />
+</section>
+
+<section class="slide-red" data-transition="fade-in fade-out">
+  <img style="width: 50%;"src="img/rust_logo.svg"/>
+</section>
+
+<section data-transition="fade-in fade-out" data-background-image="img/12.png">
+  <div id="left">
+    <img style="width: 80%;" src="img/uv.jpg" />
+  </div>
+  <div id="right">
+    <img style="width: 80%;" src="img/rye.jpg" />
+  </div>
+</section>
+
+<section data-transition="fade-in fade-out" data-background-image="img/12.png">
+  <div id="left">
+    <img style="width: 80%;" src="img/uv2.avif" />
+    <h4>astral.sh/blog/uv/</h4>
+  </div>
+  <div id="right">
+    <img style="width: 50%;" src="img/rye.svg" />
+    <h4>rye-up.com/</h4>
+  </div>
+</section>
+
+<section data-transition="fade-in fade-out" data-background-image="img/14.png">
+  <h1 class="r-fit-text">Should we re-write</h1>
+  <h1 class="r-fit-text"><i class="qt-lemon">everything</i> in Rust?</h1>
+</section>
+
+<section data-transition="fade-in fade-out" data-background-image="img/14.png">
+  <h1 class="r-fit-text">Should <i class="qt-neon">enable more people</i></h1>
+  <h1 class="r-fit-text">to be knowledgable about it?</h1>
+</section>
+
+<section data-transition="fade-in fade-out" data-background-image="img/14.png">
+  <h1>but...</h1>
+</section>
+
+<section data-transition="fade-in fade-out" data-background-image="img/12.png">
+  <h1 class="r-fit-text">So is extending Python</h1>
+  <h1 class="r-fit-text">the only <i class="qt-lemon">potential</i>?</h1>
+</section>
+
+<section data-transition="fade-in fade-out" data-background-image="img/14.png">
+  <h1 class="r-fit-text">PEP684</h1>
+  <h3>A Per-Interpreter GIL</h3>
+  <p><a href="https://peps.python.org/pep-0684/">peps.python.org/pep-0684/</a> (3.12)</p>
+</section>
+
+<section data-transition="fade-in fade-out" data-background-image="img/14.png">
+  <h1 class="r-fit-text">PEP703</h1>
+  <h3>Making the Global Interpreter Lock Optional in CPython</h3>
+  <p><a href="https://peps.python.org/pep-0703/">peps.python.org/pep-0703/</a> (3.13*)</p>
+</section>
+
+<section data-transition="fade-in fade-out" data-background-image="img/14.png">
+  <h1 class="r-fit-text">The Faster CPython initiative</h1>
+  <p>
+    👉 <a href="https://github.com/markshannon/faster-cpython/blob/master/plan.md">Initial plan</a><br/>
+    👉 <a href="https://github.com/faster-cpython/ideas/">Current ideas</a>
+  </p>
+</section>
+
+<section data-transition="fade-in fade-out" data-background-image="img/14.png">
+  <h1 class="r-fit-text">JIT Compiler</h1>
+  <h3>Experimental</h3>
+  <p style="font-size: 70%;"><a href="https://docs.python.org/3.13/whatsnew/3.13.html#whatsnew313-jit-compiler">docs.python.org/3.13/whatsnew/3.13.html#whatsnew313-jit-compiler</a></p>
+</section>
+
+<section data-transition="fade-in fade-out" data-background-image="img/12.png">
+  <h2 class="r-fit-text">Extending Python with other languages</h2>
+  <h2 class="r-fit-text"><i class="qt-mandarin">generates discussion</i></h2>
+</section>
+
+<section data-transition="fade-in fade-out" data-background-image="img/12.png">
+  <h2 class="r-fit-text">Extending Python with other languages</h2>
+  <h2 class="r-fit-text"><i class="qt-mandarin">keeps the community active</i></h2>
+</section>
+
+<section data-transition="fade-in fade-out" data-background-image="img/12.png">
+  <h2 class="r-fit-text">Extending Python with other languages</h2>
+  <h2 class="r-fit-text"><i class="qt-mandarin">includes other communities</i></h2>
+</section>
+
+<section data-transition="fade-in fade-out" data-background-image="img/19.png">
+  <div id="left">
+    <h4>The role of Rust, Zig and C++ in the Python ecosystem</h4>
+    <p class="x80">
+      Dr. <i class="qt-lemon">Cristián</i> Maureira-Fredes<br>
+      <span class="qt-neon">@cmaureir</span><br/>
+      <img class="clean-img" src="img/mastodon.png">
+      <img class="clean-img" src="img/github_white.png">
+      <img class="clean-img" src="img/linkedin.png">
+      <img class="clean-img" src="img/twitter.png">
+    </p>
+    <hr class="qt-line"/>
+    <h1>Thanks</h1>
+  </div>
+</section>
+
+    </div>
+  </div>
+
+  <script src="reveal.js/dist/reveal.js"></script>
+  <script src="reveal.js/plugin/notes/notes.js"></script>
+  <script src="reveal.js/plugin/math/math.js"></script>
+  <script src="reveal.js/plugin/markdown/markdown.js"></script>
+  <script src="reveal.js/plugin/highlight/highlight.js"></script>
+  <script>
+    // More info about initialization & config:
+    // - https://revealjs.com/initialization/
+    // - https://revealjs.com/config/
+    Reveal.initialize({
+      hash: true,
+
+      // Learn about plugins: https://revealjs.com/plugins/
+      plugins: [ RevealMarkdown, RevealHighlight, RevealNotes, RevealMath.KaTeX ]
+    });
+  </script>
+  <!-- Hack to have a footer-->
+
+  <!-- 1. Style header/footer <div> so they are positioned as desired: in css/qt.css -->
+  <!-- 2. Create hidden header/footer <div> -->
+  <div id="hidden" style="display:none;">
+    <div id="header">
+      <div id="header-left" style="margin-top: 20px; margin-left: 20px;">
+      </div>
+      <div id="header-right"></div>
+      <div id="footer-left">
+        <p style="font-size: 14pt;margin-left: 20px;">
+          <b><i class="qt-lemon">PyCon LT 2024</i></b>
+          | <b><i class="qt-neon">@cmaureir</i></b>
+      </div>
+  </div>
+
+  <script src="https://code.jquery.com/jquery-2.2.4.min.js"></script>
+  <script type="text/javascript">
+    // 3. On Reveal.js ready event, copy header/footer <div> into each `.slide-background` <div>
+    var header = $('#header').html();
+    if ( window.location.search.match( /print-pdf/gi ) ) {
+      Reveal.addEventListener( 'ready', function( event ) {
+        $('.slide-background').append(header);
+      });
+    }
+    else {
+      $('div.reveal').append(header);
+     }
+  </script>
+</body>
+</html>
